@@ -1,0 +1,40 @@
+project_name: wqy
+builds:
+  - 
+    id: "build"
+    main: ./main.go
+    binary: wqy
+    
+    ldflags:
+     - -s -w
+     
+    env:
+      - CGO_ENABLED=0
+
+    goos:
+      - linux
+
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+      - mips
+      - mipsle
+      - mips64
+      - mips64le
+      
+    goarm:
+      - 6
+      - 7
+
+    gomips:
+      - hardfloat
+      - softfloat
+  
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:' 
