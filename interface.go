@@ -52,7 +52,8 @@ type LoginConfig struct {
 }
 
 type WeQuMqtt struct {
-	WQ mqtt.Client
+	WQ       mqtt.Client
+	Username string
 }
 
 func NewWeQu(clientID, userName, passWord string) LoginConfig {
@@ -78,11 +79,26 @@ func (lc LoginConfig) Join() WeQuMqtt {
 		os.Exit(-1)
 	}
 	fmt.Println("Connected from MQTT server")
-	return WeQuMqtt{client}
+	return WeQuMqtt{client, lc.Username}
+}
+
+func (m WeQuMqtt) Ping() {
+	for {
+		token := m.WQ.Publish("0", 0, false, "1")
+		if token.Wait() && token.Error() != nil {
+			break
+		}
+		done := make(chan bool)
+		go func() {
+			time.Sleep(50 * time.Millisecond)
+			done <- true
+		}()
+		<-done
+	}
 }
 
 func (m WeQuMqtt) Subscribe() {
-	token := m.WQ.Subscribe("duck/BBN8BJYSY", Qos, messageHandler)
+	token := m.WQ.Subscribe(fmt.Sprintf("duck/%s", m.Username), Qos, messageHandler)
 	if token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 	}
