@@ -15,13 +15,7 @@ const (
 var rt = 0
 
 var messageHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	cmd := ParseShellJSON(msg.Payload())
-	switch cmd.ShellType {
-	case 0:
-		fmt.Println(cmd.ShellContent)
-	default:
-		fmt.Println("Unsupported Command!")
-	}
+	Handle(msg.Payload()).ParseShellJSON().Run()
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -41,6 +35,8 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 
 type WeQu interface {
 	Join() WeQuMqtt
+	ParseShellJSON() Shell
+	Run()
 	Subscribe()
 	Disconnect()
 }
@@ -84,7 +80,7 @@ func (lc LoginConfig) Join() WeQuMqtt {
 
 func (m WeQuMqtt) Ping() {
 	for {
-		token := m.WQ.Publish("0", 0, false, "1")
+		token := m.WQ.Publish("0", Qos, false, "1")
 		if token.Wait() && token.Error() != nil {
 			break
 		}

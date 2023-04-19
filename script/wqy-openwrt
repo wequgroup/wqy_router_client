@@ -3,9 +3,9 @@
 START=99
 
 start(){
-   /opt/smya -id  -passwd
+   /opt/wqy -username  -passwd
 }
 
 stop() {
-  killall smya
+  killall wqy
 }
