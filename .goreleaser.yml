@@ -1,13 +1,12 @@
 project_name: wqy
 builds:
-  - 
-    id: "build"
-    main: ./main.go
+  -
+    id: "wqy"
     binary: wqy
     
     ldflags:
-     - -s -w
-     
+      - -s -w
+
     env:
       - CGO_ENABLED=0
 
@@ -15,16 +14,29 @@ builds:
       - linux
 
     goarch:
+      - 386
       - amd64
+      - arm
       - arm64
       - mips
       - mipsle
       - mips64
       - mips64le
-  
+
+    goarm:
+      - 6
+      - 7
+
+    gomips:
+      - hardfloat
+      - softfloat
+
+    tags:
+      - netgo
+
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:' 
+      - '^docs:'
+      - '^test:'
